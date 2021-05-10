@@ -44,5 +44,4 @@ public class GodMario implements Mario {
 			return "";
 		}
 	}
-
 }

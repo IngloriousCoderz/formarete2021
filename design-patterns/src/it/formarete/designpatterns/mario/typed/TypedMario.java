@@ -18,5 +18,4 @@ public class TypedMario implements Mario {
 	public String onKeyPressed(KeyCode keyCode) {
 		return type.onKeyPressed(keyCode);
 	}
-
 }

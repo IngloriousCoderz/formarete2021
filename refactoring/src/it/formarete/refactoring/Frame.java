@@ -36,12 +36,14 @@ public class Frame {
 		for (int i = 0; i < halfSpaces; i++) {
 			output += " ";
 		}
+
 		output += label;
+
 		for (int i = 0; i < halfSpaces + offset; i++) {
 			output += " ";
 		}
-		output += "* \n";
-		return output;
+
+		return output + "* \n";
 	}
 
 	private String buildFullRow() {

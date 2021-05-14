@@ -11,7 +11,7 @@ public class GodCalculator implements Calculator {
 			throw new IllegalArgumentException("One of the two parameters is null");
 		}
 
-		Integer sum = a + b;
+		int sum = a + b;
 
 		System.out.println("Output: " + sum);
 

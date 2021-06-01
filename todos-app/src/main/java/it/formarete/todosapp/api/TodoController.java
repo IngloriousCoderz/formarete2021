@@ -1,7 +1,6 @@
 package it.formarete.todosapp.api;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import it.formarete.todosapp.domain.Todo;
+import it.formarete.todosapp.domain.User;
 import it.formarete.todosapp.persistence.TodoRepository;
 
 @RestController
@@ -27,8 +28,14 @@ public class TodoController {
 	private TodoRepository todos;
 
 	@GetMapping
-	public List<Todo> all() {
-		return todos.findAll();
+	public List<Todo> all(@RequestParam(name = "author", required = false) Integer authorId) {
+		if (authorId == null) {
+			return todos.findAll();
+		}
+
+		User author = new User();
+		author.setId(authorId);
+		return todos.findByAuthor(author);
 	}
 
 	@GetMapping("/{id}")
@@ -53,13 +60,25 @@ public class TodoController {
 	@PatchMapping("/{id}")
 	public Todo merge(@PathVariable Integer id, @RequestBody Todo body) {
 		Todo todo = get(id);
-		body.setId(todo.getId());
-		return todos.merge(body);
+		if (body.getText() != null) {
+			todo.setText(body.getText());
+		}
+		if (body.getDone() != null) {
+			todo.setDone(body.getDone());
+		}
+		return todos.save(todo);
 	}
 
 	@DeleteMapping("/{id}")
 	public Todo remove(@PathVariable Integer id) {
 		Todo todo = get(id);
-		return todos.delete(todo);
+		todos.delete(todo);
+		return todo;
+	}
+
+	@DeleteMapping
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteAll(@RequestParam String text) {
+		todos.deleteTodos(text);
 	}
 }

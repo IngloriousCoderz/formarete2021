@@ -12,18 +12,19 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import it.formarete.springwebapp.domain.User;
-import it.formarete.springwebapp.persistence.UserDB;
+import it.formarete.todosapp.domain.User;
+import it.formarete.todosapp.persistence.UserRepository;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 	@Autowired
-	private UserDB users;
+	private UserRepository users;
 
 	@GetMapping
 	public List<User> all() {
@@ -32,13 +33,8 @@ public class UserController {
 
 	@GetMapping("/{id}")
 	public User get(@PathVariable Integer id) {
-		User user = users.findById(id);
-
-		if (user == null) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
-		}
-
-		return user;
+		return users.findById(id)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
 	}
 
 	@PostMapping
@@ -57,13 +53,26 @@ public class UserController {
 	@PatchMapping("/{id}")
 	public User merge(@PathVariable Integer id, @RequestBody User body) {
 		User user = get(id);
-		body.setId(user.getId());
-		return users.merge(body);
+		if (body.getUsername() != null) {
+			user.setUsername(body.getUsername());
+		}
+		if (body.getPassword() != null) {
+			user.setPassword(body.getPassword());
+		}
+		return users.save(user);
 	}
 
 	@DeleteMapping("/{id}")
 	public User remove(@PathVariable Integer id) {
 		User user = get(id);
-		return users.delete(user);
+		users.delete(user);
+		return user;
+	}
+
+	@DeleteMapping
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deleteAll(@RequestParam String username) {
+//		users.deleteUsers(username);
+		users.deleteByUsername(username);
 	}
 }

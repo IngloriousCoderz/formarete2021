@@ -1,0 +1,6 @@
+<ul>
+    <li *ngFor="let todo of todos">
+        <span [ngClass]="{ done: todo.done }" (click)="handleToggle(todo)">{{ todo.text }}</span>
+        <button (click)="handleRemove(todo.id)">x</button>
+    </li>
+</ul>

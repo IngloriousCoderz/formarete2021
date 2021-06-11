@@ -1,0 +1,14 @@
+<h1>{{ title }}</h1>
+
+<form (ngSubmit)="handleSubmit()">
+  <!-- <input placeholder="What next?" [value]="text" (keyup)="handleChange($event)" /> -->
+  <input autofocus placeholder="What next?" [(ngModel)]="text" name="text" />
+  <button>Submit</button>
+</form>
+
+<ul>
+  <li *ngFor="let todo of todos">
+    <span [ngClass]="{ done: todo.done }" (click)="handleToggle(todo.id)">{{ todo.text }}</span>
+    <button (click)="handleRemove(todo.id)">x</button>
+  </li>
+</ul>

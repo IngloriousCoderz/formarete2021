@@ -1,0 +1,9 @@
+<h1>{{ title }}</h1>
+
+<app-form (onSubmit)="handleSubmit($event)"></app-form>
+
+<app-list
+  [todos]="todos"
+  (onToggle)="handleToggle($event)"
+  (onRemove)="handleRemove($event)">
+</app-list>
